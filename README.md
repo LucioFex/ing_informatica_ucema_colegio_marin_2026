@@ -12,6 +12,10 @@ https://luciofex.github.io/ing_informatica_ucema_colegio_marin_2026/
 
 Abrí `index.html` en cualquier navegador. No necesita servidor ni build.
 
+## Respaldo de emergencia
+
+`presentacion.pdf` — las 7 slides exportadas, una por página. Sirve como plan B si falla el navegador o no hay conexión.
+
 ## Controles
 
 - Flechas o barra espaciadora para avanzar y volver
