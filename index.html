@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>UCEMA · Ingeniería en Informática</title>
+<style>
+  /* ============================================================
+     UCEMA · Ingeniería en Informática — Charla 10'
+     Colegio Carmen Arriola de Marín (San Isidro)
+     Dirección: keynote premium, transiciones cinematográficas.
+     6 slides · 1 avance = 1 slide · cross-dissolve con foco.
+     Paleta: Borgoña UCEMA + Hueso + Soya. Oro solo en acentos.
+     ============================================================ */
+
+  :root{
+    --borgona:  #940028;
+    --borgona-d:#5C0019;
+    --tinta:    #260008;
+    --hueso:    #F5F1EB;
+    --soya:     #60534B;
+    --soya-cl:  #A2938A;
+    --oro:      #C9A961;
+
+    --sans:  "Segoe UI", "Helvetica Neue", -apple-system, Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", serif;
+    --ease:  cubic-bezier(.22,.61,.24,1);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html,body{ height:100%; overflow:hidden; background:var(--tinta); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+
+  /* ---------------- Escenario ---------------- */
+  #deck{ position:fixed; inset:0; }
+
+  /* Cross-dissolve con foco: la nueva enfoca sobre la anterior */
+  .slide{
+    position:absolute; inset:0; display:grid; place-items:center;
+    padding:clamp(1.8rem,5vw,6rem);
+    opacity:0; visibility:hidden; transform:scale(1.03); filter:blur(7px);
+    transition:opacity .8s var(--ease), transform 1.05s var(--ease), filter .8s var(--ease),
+               visibility 0s linear .85s;
+  }
+  .slide.active{
+    opacity:1; visibility:visible; transform:none; filter:none; z-index:3;
+    transition:opacity .8s var(--ease), transform 1.05s var(--ease), filter .8s var(--ease), visibility 0s;
+  }
+  /* La saliente permanece opaca debajo y retrocede apenas (sin flash) */
+  .slide.leaving{
+    opacity:1; visibility:visible; z-index:2; transform:scale(.985); filter:blur(3px);
+    transition:transform 1.05s var(--ease), filter .8s var(--ease);
+  }
+
+  .field-hueso{   background:var(--hueso);   color:var(--tinta); }
+  .field-borgona{ background:
+      radial-gradient(130% 120% at 78% 18%, #A11B3C 0%, var(--borgona) 42%, var(--borgona-d) 100%);
+      color:var(--hueso); }
+
+  /* Textura de papel muy sutil */
+  .grain{ position:fixed; inset:0; z-index:4; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .wrap{ position:relative; z-index:3; width:100%; max-width:1120px; text-align:center; }
+
+  /* ---------------- Tipografía ---------------- */
+  .eyebrow{ font-size:clamp(.66rem,1.4vw,.9rem); letter-spacing:.34em; text-transform:uppercase;
+    font-weight:700; margin-bottom:clamp(1rem,3vh,1.9rem); }
+  .field-hueso   .eyebrow{ color:var(--soya); }
+  .field-borgona .eyebrow{ color:rgba(245,241,235,.72); }
+
+  h1{ font-weight:800; line-height:1; letter-spacing:-.035em; }
+  .display{ font-size:clamp(2.5rem,7.4vw,6rem); }
+  .serif{ font-family:var(--serif); font-style:italic; font-weight:400;
+    letter-spacing:-.01em; line-height:1.08; font-size:clamp(2.1rem,6.2vw,5rem); }
+
+  .sub{ font-size:clamp(.98rem,1.85vw,1.3rem); margin-top:clamp(1.1rem,3.2vh,2rem);
+    font-weight:500; line-height:1.5; max-width:40ch; margin-inline:auto; }
+  .field-hueso   .sub{ color:var(--soya); }
+  .field-borgona .sub{ color:rgba(245,241,235,.86); }
+
+  .field-hueso   .acc{ color:var(--borgona); }
+  .field-borgona .acc{ color:#fff; }
+  .oroacc{ color:var(--oro); }
+
+  .flecha{ font-weight:400; color:var(--oro); }
+
+  .cursor{ display:inline-block; width:.06em; height:.8em; background:currentColor;
+    margin-left:.08em; transform:translateY(.03em); animation:blink 1.1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .rule{ width:0; height:2px; background:var(--oro); }
+  .active .rule{ width:clamp(52px,7vw,92px); transition:width .9s var(--ease) .4s; }
+
+  /* ---------------- Movimiento cinético ---------------- */
+  .reveal{ display:block; overflow:hidden; margin-block:-.15em; }
+  .reveal > span{ display:block; line-height:1.12; padding-block:.18em; transform:translateY(118%);
+    transition:transform .95s var(--ease) .12s; }
+  .active .reveal > span{ transform:translateY(0); }
+  .active .reveal.r2 > span{ transition-delay:.2s; }
+  .active .reveal.r3 > span{ transition-delay:.28s; }
+
+  .anim{ opacity:0; transform:translateY(14px); }
+  .active .anim{ opacity:1; transform:none; transition:opacity .9s var(--ease) .25s, transform .9s var(--ease) .25s; }
+  .active .anim.a2{ transition-delay:.4s; }
+  .active .anim.a3{ transition-delay:.52s; }
+  .pop{ opacity:0; transform:scale(.94); }
+  .active .pop{ opacity:1; transform:none; transition:opacity .9s var(--ease) .2s, transform 1s var(--ease) .2s; }
+
+  /* ---------------- Logo UCEMA ---------------- */
+  .logo-ucema{ width:clamp(96px,15vw,150px); height:auto; display:block; }
+  .logo-ucema.chico{ width:clamp(74px,10vw,104px); margin:0 auto; }
+  /* En fondo borgoña el cuadrado del logo se funde, dejando el wordmark blanco */
+
+  /* Lockup UCEMA en la portada: el logo es cuadrado con el texto en el tercio
+     inferior, así que recortamos el espacio vacío de arriba y mostramos solo el
+     wordmark. Sin marco: el borgoña del logo se funde con el fondo. */
+  .logo-lockup{ width:clamp(170px,22vw,240px); aspect-ratio:200/82; overflow:hidden; }
+  .logo-lockup svg{ width:100%; aspect-ratio:1; display:block; transform:translateY(-56%); }
+
+  /* ============ PORTADA (slide 1) ============ */
+  .cover{ place-items:stretch; }
+  .cover-grid{ position:relative; z-index:3; display:flex; flex-direction:column;
+    justify-content:space-between; width:100%; height:100%; max-width:1180px; margin:0 auto; text-align:left; }
+
+  .cover-main{ margin:auto 0; }
+  .kicker{ font-size:clamp(.72rem,1.5vw,.95rem); letter-spacing:.36em; text-transform:uppercase;
+    font-weight:700; color:var(--oro); margin-bottom:clamp(.9rem,2.5vh,1.4rem); }
+  .cover-title{ font-weight:800; letter-spacing:-.04em; line-height:.96; color:#fff;
+    font-size:clamp(3rem,9vw,7.4rem); }
+  .cover-main .rule{ margin-top:clamp(1.4rem,3.5vh,2.2rem); }
+  .active .cover-main .rule{ width:clamp(90px,14vw,180px); }
+
+  .cover-foot{ display:flex; justify-content:space-between; align-items:flex-end; gap:2rem;
+    flex-wrap:wrap; padding-top:clamp(1rem,3vh,2rem);
+    border-top:1px solid rgba(245,241,235,.16); }
+  .speaker{ display:flex; align-items:center; gap:.9rem; }
+  .speaker img{ width:clamp(64px,8.5vw,90px); height:clamp(64px,8.5vw,90px); border-radius:50%;
+    object-fit:cover; display:block; box-shadow:0 8px 26px rgba(0,0,0,.35); }
+  .speaker .n{ font-weight:800; font-size:clamp(.95rem,1.7vw,1.12rem); color:#fff; letter-spacing:-.01em; }
+  .speaker .r{ font-size:clamp(.7rem,1.35vw,.83rem); color:var(--soya-cl); margin-top:.2rem;
+    max-width:40ch; line-height:1.4; }
+  .venue-r{ text-align:right; }
+  .venue-r .l{ font-size:clamp(.62rem,1.2vw,.74rem); letter-spacing:.24em; text-transform:uppercase; color:var(--oro); }
+  .venue-r .c{ font-family:var(--serif); font-style:italic; font-size:clamp(1rem,2.1vw,1.45rem);
+    color:#fff; margin-top:.28rem; line-height:1.15; }
+  .venue-r .s{ font-size:clamp(.68rem,1.3vw,.8rem); color:var(--soya-cl); margin-top:.25rem; letter-spacing:.02em; }
+
+  /* ---------------- Tarjeta diVenuo ---------------- */
+  .badge{ display:inline-flex; align-items:center; gap:1rem; background:#fff; border-radius:18px;
+    padding:.9rem 1.5rem; box-shadow:0 16px 44px rgba(38,0,8,.16); margin-top:clamp(1.3rem,3.6vh,2.1rem);
+    border:1px solid rgba(201,169,97,.4); max-width:min(92vw,560px); }
+  .badge img{ width:clamp(58px,8vw,78px); height:auto; display:block; border-radius:16px; }
+  .badge .div{ width:1px; align-self:stretch; background:rgba(38,0,8,.12); }
+  .badge .cap{ text-align:left; font-size:clamp(.92rem,1.7vw,1.14rem); color:var(--soya); line-height:1.4; }
+  .badge .cap b{ color:var(--tinta); }
+
+  /* ---------------- Historia (antes / actualidad) ---------------- */
+  .historia .wrap{ max-width:1240px; }
+  .historia h1{ font-size:clamp(1.6rem,3.6vw,2.7rem); line-height:1.04; }
+  .comp{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(1rem,2.6vw,2.2rem);
+    margin-top:clamp(1rem,2.8vh,1.7rem); text-align:left; align-items:start; }
+  .comp-col{ display:flex; flex-direction:column; }
+  .comp-col > .cuando{ display:block; font-size:clamp(.66rem,1.25vw,.84rem); letter-spacing:.22em;
+    text-transform:uppercase; font-weight:800; color:var(--oro); margin-bottom:.7rem; }
+  .comp-stack{ display:grid; gap:clamp(.7rem,1.8vh,1.15rem); }
+  .foto figure{ margin:0; }
+  .foto img{ width:100%; object-fit:cover; border-radius:14px; display:block;
+    box-shadow:0 16px 40px rgba(0,0,0,.4); border:1px solid rgba(245,241,235,.16); }
+  .foto .que{ display:block; font-size:clamp(.7rem,1.3vw,.9rem); color:rgba(245,241,235,.9);
+    margin-top:.5rem; line-height:1.35; }
+  .foto-antes img{ aspect-ratio:4/3; }
+  .foto-hoy img{ aspect-ratio:3/1; }
+
+  /* ---------------- HUD ---------------- */
+  #progreso{ position:fixed; left:0; top:0; height:3px; width:0%; background:var(--borgona); z-index:20;
+    transition:width .8s var(--ease); }
+  body.en-borgona #progreso{ background:var(--oro); }
+
+  .hud{ position:fixed; z-index:20; font-size:.68rem; letter-spacing:.2em; text-transform:uppercase;
+    font-weight:600; color:var(--soya); transition:color .8s var(--ease), opacity .6s ease; }
+  body.en-borgona .hud{ color:rgba(245,241,235,.72); }
+  #marca{ left:clamp(1.1rem,3vw,2.4rem); bottom:clamp(1.1rem,3vw,2rem); }
+  #indice{ right:clamp(1.1rem,3vw,2.4rem); bottom:clamp(1.1rem,3vw,2rem); }
+  #indice b{ font-weight:800; color:var(--borgona); }
+  body.en-borgona #indice b{ color:var(--oro); }
+
+  #pista{ position:fixed; z-index:20; left:50%; bottom:clamp(1.1rem,3vw,2rem); transform:translateX(-50%);
+    font-size:.66rem; letter-spacing:.18em; text-transform:uppercase; font-weight:600; color:var(--soya);
+    display:flex; gap:.7em; align-items:center; transition:opacity .6s ease; }
+  #pista .k{ border:1px solid currentColor; border-radius:5px; padding:.1em .5em; opacity:.72; }
+
+  @media (max-width:640px){
+    .cover-foot{ flex-direction:column; align-items:flex-start; gap:1.2rem; }
+    .venue-r{ text-align:left; }
+    .comp{ grid-template-columns:1fr; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition-duration:.001s !important; }
+    .slide{ filter:none; } .reveal > span{ transform:none; } .anim,.pop{ opacity:1; transform:none; }
+    .rule,.active .cover-main .rule{ width:clamp(52px,7vw,92px); }
+  }
+</style>
+</head>
+<body>
+  <div id="progreso"></div>
+  <div class="grain"></div>
+
+  <!-- Símbolo del logo UCEMA (definido una vez) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ucema" viewBox="0 0 200 200">
+      <path d="M200 0H0V200H200V0Z" fill="#940028"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M78.1479 173.382C76.7886 179.404 72.3553 183.82 64.4442 183.82C54.2941 183.82 49.3904 176.317 49.3904 166.861C49.3904 157.757 54.3904 149.572 64.7238 149.572C73.0756 149.572 77.2775 154.531 78.1312 160.1H72.009C71.159 157.169 69.2016 154.544 64.5164 154.544C58.2201 154.544 55.7349 160.346 55.7349 166.641C55.7349 172.582 57.9756 178.843 64.7053 178.843C69.4571 178.843 71.1701 175.763 71.9941 173.378L78.1479 173.382ZM22.9497 150.054V169.972C22.9497 176.872 26.5164 178.846 30.2627 178.846C34.5941 178.846 37.4441 176.587 37.4441 169.972V150.054H43.5812V169.659C43.5812 180.85 37.2849 183.82 30.1682 183.82C22.9923 183.82 16.7979 180.672 16.7979 169.856V150.054H22.9497ZM90.0683 168.587H105.896V163.417H90.0683V155.239H106.613V150.054H84.1109V183.376H106.759L107.5 178.191H90.0683V168.587ZM141.357 170.289C141.357 164.433 141.437 158.089 141.579 154.413H141.372C140.019 160.182 136.596 170.86 133.468 180.619L132.877 182.461L132.587 183.369H127.305C126.719 181.309 126.05 178.987 125.35 176.558C123.02 168.475 120.344 159.191 119.233 154.331H119.039C119.309 158.22 119.437 165.257 119.437 170.972V183.369H113.809V150.054H122.927C125.872 159.313 129.3 171.067 130.335 175.794H130.398C131.185 171.817 135.379 159.128 138.483 150.054H147.289V183.369H141.363L141.357 170.289ZM158.553 183.369L161.431 174.885H173.735L176.74 183.369H183.198L171.44 150.054H163.787L152.515 183.369H158.553ZM172.094 168.927L172.357 169.7H162.796L163.096 168.76C165.043 162.675 166.642 157.674 167.407 154.7H167.45C168.185 157.434 169.659 161.768 172.094 168.927Z" fill="white"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M68.6648 127.254C68.6648 126.187 67.7555 125.854 66.6611 125.481C65.3518 125.018 64.4296 124.337 64.4296 123.041C64.4296 121.665 65.4981 120.843 67.2351 120.843C68.3037 120.843 68.9018 121.011 69.2926 121.165C69.5185 121.267 69.5463 121.318 69.5055 121.602L69.4259 122.167C69.4 122.193 69.3653 122.209 69.3284 122.211C69.2915 122.214 69.255 122.202 69.2259 122.18C68.8648 121.641 68.1703 121.293 67.2222 121.293C66.1111 121.293 65.524 121.833 65.524 122.718C65.524 123.707 66.2463 124.093 67.2611 124.454C68.7425 124.967 69.7463 125.531 69.7463 126.894C69.7463 128.539 68.3833 129.335 66.674 129.335C65.6592 129.335 64.924 129.18 64.5092 128.974C64.2814 128.859 64.2814 128.833 64.2963 128.55L64.3351 127.857C64.3665 127.835 64.404 127.823 64.4425 127.823C64.481 127.823 64.5186 127.835 64.55 127.857C64.9203 128.413 65.6722 128.885 66.687 128.885C67.9963 128.889 68.6648 128.23 68.6648 127.254ZM22.3814 121.022C22.3277 121.022 22.3147 121.072 22.3425 121.111C22.4759 121.318 22.6351 121.852 22.6351 122.796V126.483C22.6351 127.959 21.7944 128.667 20.2703 128.667C18.6944 128.667 18.0925 127.831 18.0925 126.611V122.778C18.0925 121.92 18.1592 121.317 18.3073 121.111C18.3462 121.059 18.3462 121.022 18.2536 121.022H16.7573C16.6629 121.022 16.6629 121.059 16.7036 121.111C16.8499 121.313 16.9314 121.917 16.9314 122.778V126.559C16.9314 127.794 17.4259 129.337 20.1647 129.337C22.3555 129.337 23.1962 128.065 23.1962 126.498V122.794C23.1962 121.868 23.3295 121.33 23.4777 121.111C23.5166 121.072 23.4907 121.022 23.4647 121.022H22.3814ZM25.9975 121.541C26.0882 121.644 26.1673 121.735 26.2018 121.769V127.382C26.2018 128.307 26.0555 128.83 25.9073 129.048C25.8685 129.1 25.8944 129.15 25.9351 129.15H27.0166C27.0703 129.15 27.0703 129.1 27.0444 129.048C26.9092 128.863 26.7629 128.32 26.7629 127.382V122.424L32.161 129.143C32.2989 129.191 32.4486 129.195 32.5888 129.154V122.796C32.5888 121.87 32.7221 121.332 32.8684 121.113C32.8773 121.107 32.8841 121.099 32.8878 121.089C32.8915 121.08 32.8919 121.069 32.889 121.059C32.8875 121.054 32.8853 121.049 32.8823 121.045L32.8802 121.042L32.877 121.038C32.8753 121.037 32.8735 121.035 32.8716 121.034C32.8632 121.027 32.853 121.024 32.8425 121.024H31.7592C31.7055 121.024 31.7055 121.074 31.7333 121.113C31.8666 121.315 32.0129 121.857 32.0129 122.796V127.137L27.2314 121.139C27.1499 121.035 27.111 121.024 26.9499 121.024H25.6407L25.6375 121.024C25.6358 121.024 25.634 121.024 25.6322 121.024L25.628 121.025L25.6258 121.025C25.6202 121.026 25.6149 121.028 25.61 121.031C25.6048 121.034 25.6003 121.038 25.5965 121.042C25.5934 121.046 25.5909 121.05 25.5889 121.054C25.5844 121.064 25.5831 121.075 25.585 121.085C25.587 121.096 25.5922 121.106 25.5999 121.113C25.6592 121.154 25.8444 121.366 25.9972 121.54L25.9975 121.541ZM36.7444 127.394C36.7444 128.255 36.824 128.859 36.9703 129.061C37.011 129.113 37.011 129.163 36.9166 129.163H35.4074C35.3148 129.163 35.3148 129.113 35.3537 129.061C35.5018 128.855 35.5814 128.265 35.5814 127.394V122.778C35.5814 121.917 35.5018 121.313 35.3537 121.111C35.3148 121.059 35.3148 121.022 35.4074 121.022H36.9166C37.011 121.022 37.011 121.059 36.9703 121.111C36.824 121.317 36.7444 121.92 36.7444 122.778V127.394ZM42.4537 129.193H43.0407L45.6463 123.041C46.1278 121.922 46.4611 121.37 46.7018 121.113C46.7555 121.074 46.7426 121.024 46.6759 121.024H45.5C45.4203 121.024 45.3926 121.061 45.4055 121.113C45.4722 121.306 45.3518 122.089 44.9648 123.041L43.0685 127.754L41.0648 123.065C40.6296 122.039 40.4555 121.446 40.5092 121.113C40.5092 121.061 40.5092 121.024 40.4148 121.024H38.8926C38.8259 121.024 38.7981 121.074 38.8389 121.113C39.082 121.395 39.367 122.06 39.6746 122.778L39.7452 122.942L39.8148 123.104L42.4537 129.193ZM53.2666 121.024C53.4815 121.024 53.5203 121.035 53.5203 121.243L53.5352 122.013C53.5114 122.029 53.4834 122.038 53.4546 122.038C53.4258 122.038 53.3978 122.029 53.374 122.013C53.0944 121.73 52.4129 121.435 51.7574 121.435H50V124.815H51.7092C52.117 124.815 52.5099 124.697 52.753 124.624C52.8416 124.598 52.9096 124.577 52.9518 124.57C52.9548 124.57 52.9579 124.57 52.9609 124.57C52.9671 124.57 52.97 124.57 52.9729 124.571C52.9821 124.573 52.9853 124.574 52.9883 124.575C52.9925 124.577 52.9965 124.579 53.0003 124.581C53.0071 124.585 53.0132 124.59 53.0185 124.596V125.47C53.0103 125.48 52.9999 125.487 52.9883 125.491C52.9767 125.496 52.9642 125.498 52.9518 125.496C52.552 125.354 52.1332 125.271 51.7092 125.252H50V128.309C50 128.694 50.0129 128.72 50.3611 128.72H51.7092C52.4554 128.692 53.1687 128.406 53.7277 127.911C53.8203 127.846 53.9407 127.872 53.9277 127.935L53.6611 128.937C53.6533 128.998 53.6231 129.055 53.5762 129.095C53.5294 129.135 53.4692 129.157 53.4074 129.155H48.6722C48.5778 129.155 48.5778 129.105 48.6185 129.054C48.7648 128.848 48.8444 128.257 48.8444 127.387V122.778C48.8444 121.917 48.7648 121.313 48.6185 121.111C48.5778 121.059 48.5778 121.022 48.6722 121.022L53.2666 121.024ZM61.2258 128.911C61.5973 129.117 62.0159 129.223 62.4407 129.218C62.5706 129.216 62.7 129.202 62.8277 129.178C62.8944 129.152 62.8944 129.102 62.8018 129.05C62.3333 128.78 61.7499 128.254 60.824 127.046C60.2907 126.326 59.9166 125.761 59.661 125.337C60.2481 125.105 61.3592 124.528 61.3592 123.154C61.3592 121.265 59.461 121.022 58.4869 121.022H55.8407C55.7481 121.022 55.7481 121.059 55.7869 121.111C55.9351 121.313 56.0147 121.917 56.0147 122.778V127.398C56.0147 128.268 55.9351 128.859 55.7869 129.065C55.7481 129.117 55.7481 129.167 55.8407 129.167H57.3369C57.4314 129.167 57.4314 129.117 57.3907 129.065C57.2444 128.863 57.1777 128.259 57.1777 127.398V125.639C57.6264 125.669 58.0766 125.674 58.5258 125.652C58.8816 126.232 59.2038 126.757 59.6092 127.318C59.9962 127.857 60.5981 128.563 61.2258 128.911ZM58.4999 125.237C58.0184 125.25 57.4314 125.237 57.1777 125.211V121.435H58.3925C59.1629 121.435 60.0888 121.718 60.0888 123.22C60.0888 124.722 59.4073 125.224 58.4999 125.237ZM73.4221 129.061C73.2758 128.859 73.1962 128.255 73.1962 127.394L73.1888 122.778C73.1888 121.92 73.2684 121.317 73.4147 121.111C73.4555 121.059 73.4555 121.022 73.361 121.022H71.8518C71.7592 121.022 71.7592 121.059 71.798 121.111C71.9462 121.313 72.0258 121.917 72.0258 122.778V127.394C72.0258 128.265 71.9462 128.855 71.798 129.061C71.7592 129.113 71.7592 129.163 71.8518 129.163H73.3684C73.4629 129.163 73.4629 129.113 73.4221 129.061ZM75.9721 129.052C76.1203 128.846 76.1999 128.255 76.1999 127.385V122.778C76.1999 121.917 76.1203 121.313 75.9721 121.111C75.9332 121.059 75.9332 121.022 76.0258 121.022H79.0851C82.011 121.022 83.2536 122.82 83.2536 124.889C83.2536 127.226 81.9703 129.148 79.0851 129.148H76.0258C75.9258 129.154 75.9258 129.104 75.9721 129.052ZM77.6684 128.718H79.0184C81.1703 128.718 81.9036 126.983 81.9036 124.902C81.9036 123.168 81.1962 121.435 79.0055 121.435H77.3629V128.357C77.3629 128.628 77.3758 128.718 77.6684 128.718ZM84.1796 129.154H85.3555C85.4629 129.154 85.4759 129.104 85.4685 129.052C85.3889 128.859 85.4944 128.102 85.9092 127.137L86.2963 126.239H89.2981L89.6203 127.074C89.9537 127.933 90.2333 128.693 90.1944 129.026C90.1944 129.117 90.2074 129.154 90.3148 129.154H91.8111C91.8907 129.154 91.9037 129.078 91.8648 129.026C91.5833 128.68 91.2092 127.909 90.8759 127.074L88.4444 120.985H87.9629L85.2222 127.137C84.7407 128.23 84.3944 128.807 84.1537 129.052C84.087 129.104 84.1 129.154 84.1796 129.154ZM89.1389 125.82H86.4666L87.8555 122.544L89.1389 125.82ZM93.7944 129.052C93.9426 128.846 94.0222 128.255 94.0222 127.385V122.778C94.0222 121.917 93.9426 121.313 93.7944 121.111C93.7555 121.059 93.7555 121.022 93.8481 121.022H96.9074C99.8333 121.022 101.076 122.82 101.076 124.889C101.076 127.226 99.7925 129.148 96.9074 129.148H93.8481C93.7555 129.154 93.7555 129.104 93.7944 129.052ZM95.4907 128.718H96.8407C98.9926 128.718 99.7259 126.983 99.7259 124.902C99.7259 123.168 99.0185 121.435 96.8278 121.435H95.1852V128.357C95.1852 128.628 95.1981 128.718 95.4907 128.718ZM17.037 139.674C17.037 140.544 16.9573 141.135 16.811 141.341C16.7703 141.392 16.7703 141.442 16.8648 141.431H19.924C22.8092 141.431 24.0925 139.511 24.0925 137.172C24.0925 135.105 22.8499 133.305 19.924 133.305H16.8648C16.7703 133.305 16.7703 133.344 16.811 133.396C16.9573 133.598 17.037 134.202 17.037 135.063V139.674ZM19.8573 141.005H18.5073C18.2129 141.005 18.1999 140.926 18.1999 140.646V133.722H19.8425C22.0351 133.722 22.7425 135.457 22.7425 137.191C22.7425 139.272 22.0073 141.005 19.8573 141.005ZM30.8888 133.311C31.1018 133.311 31.1425 133.324 31.1425 133.53L31.1555 134.302C31.1318 134.317 31.1041 134.325 31.0758 134.325C31.0476 134.325 31.0199 134.317 30.9962 134.302C30.7147 134.018 30.0332 133.722 29.3795 133.722H27.6295V137.102H29.3388C29.7453 137.102 30.1359 136.985 30.3794 136.912C30.4687 136.885 30.5382 136.864 30.5814 136.857C30.5938 136.856 30.6063 136.858 30.6179 136.862C30.6295 136.867 30.6398 136.874 30.6481 136.883V137.755C30.6452 137.759 30.6422 137.762 30.6389 137.764C30.6326 137.769 30.6255 137.774 30.6179 137.777C30.6112 137.779 30.6042 137.781 30.5971 137.781C30.5919 137.782 30.5866 137.782 30.5814 137.781C30.1813 137.64 29.7626 137.559 29.3388 137.539H27.6295V140.594C27.6295 140.981 27.6425 141.005 27.9888 141.005H29.3388C30.0845 140.978 30.7974 140.692 31.3555 140.196C31.4499 140.133 31.5703 140.159 31.5573 140.222L31.2962 141.224C31.288 141.285 31.2577 141.341 31.2109 141.382C31.1642 141.422 31.1042 141.444 31.0425 141.443H26.2962C26.2036 141.443 26.2036 141.393 26.2425 141.341C26.3906 141.135 26.4703 140.544 26.4703 139.674V135.063C26.4703 134.202 26.3906 133.598 26.2425 133.396C26.2036 133.344 26.2036 133.305 26.2962 133.305L30.8888 133.311ZM33.4092 141.341C33.3684 141.393 33.3684 141.443 33.4629 141.443L38.0481 141.433C38.1121 141.438 38.1754 141.418 38.2251 141.377C38.2747 141.337 38.3068 141.278 38.3147 141.215L38.5832 140.213C38.5962 140.15 38.4629 140.124 38.3814 140.187C37.8161 140.684 37.0964 140.97 36.3444 140.996H35.1684C34.811 140.996 34.7981 140.972 34.7981 140.585V135.063C34.7981 134.206 34.8647 133.602 35.0129 133.396C35.0518 133.344 35.0518 133.305 34.9592 133.305H33.4629C33.3684 133.305 33.3684 133.344 33.4092 133.396C33.5555 133.598 33.6351 134.202 33.6351 135.063V139.674C33.6351 140.544 33.5555 141.135 33.4092 141.341ZM52.4314 140.8C51.9369 141.237 51.1758 141.622 49.7999 141.622C47.6499 141.622 45.8462 140.274 45.8462 137.448C45.8462 134.661 47.6221 133.132 49.8943 133.132C51.0832 133.132 51.8573 133.337 52.2851 133.53C52.498 133.646 52.5518 133.685 52.4851 133.967L52.3518 134.583C52.3259 134.61 52.2911 134.626 52.2542 134.628C52.2173 134.631 52.1808 134.619 52.1518 134.596C51.8443 134.172 51.1758 133.582 49.8943 133.582C48.1036 133.582 47.1943 135.063 47.1943 137.448C47.1943 139.833 48.2499 141.006 50.0666 141.006C51.2036 141.006 51.9184 140.672 52.4314 140.3C52.4981 140.248 52.4981 140.75 52.4314 140.8ZM59.2129 133.53C59.2129 133.324 59.1721 133.311 58.9592 133.311L54.3629 133.305C54.2703 133.305 54.2703 133.344 54.3092 133.396C54.4573 133.598 54.537 134.202 54.537 135.063V139.674C54.537 140.544 54.4573 141.135 54.3092 141.341C54.2703 141.393 54.2703 141.443 54.3629 141.443H59.1036C59.1654 141.444 59.2253 141.422 59.2721 141.382C59.3188 141.341 59.3492 141.285 59.3573 141.224L59.6259 140.222C59.6388 140.159 59.5184 140.133 59.4259 140.196C58.867 140.692 58.1536 140.978 57.4073 141.005H56.0684C55.711 141.005 55.6981 140.981 55.6981 140.594V137.539H57.4073C57.8312 137.558 58.2499 137.64 58.6499 137.781C58.6623 137.783 58.6748 137.781 58.6864 137.777C58.698 137.772 58.7084 137.765 58.7166 137.755V136.883C58.7084 136.874 58.698 136.867 58.6864 136.862C58.6738 136.858 58.6602 136.857 58.6499 136.857C58.6078 136.864 58.5397 136.885 58.4522 136.911C58.208 136.984 57.8151 137.102 57.4073 137.102H55.6999V133.722H57.4499C58.1036 133.722 58.7851 134.018 59.0666 134.302C59.1203 134.339 59.2129 134.326 59.2259 134.302L59.2129 133.53ZM61.7332 139.67L61.9184 134.096C61.8077 133.844 61.6591 133.61 61.4777 133.402C61.4369 133.363 61.4518 133.311 61.5184 133.311H62.761C62.9462 133.311 62.974 133.311 63.0684 133.496L66.0073 139.856L68.6388 133.857C68.8925 133.317 68.9184 133.302 69.2258 133.302H70.1351C70.2147 133.302 70.2277 133.354 70.1888 133.406C69.9888 133.676 69.9481 134.394 69.974 135.257L70.1073 139.676C70.1351 140.665 70.2018 141.141 70.3758 141.343C70.4147 141.394 70.4147 141.444 70.3221 141.444H68.7851C68.6925 141.444 68.6925 141.394 68.7314 141.343C68.8795 141.137 68.9851 140.674 68.9592 139.676L68.8388 134.706L65.8592 141.409C65.7979 141.435 65.7321 141.448 65.6656 141.448C65.5992 141.448 65.5334 141.435 65.4721 141.409L62.4258 134.781L62.3055 139.663C62.2795 140.576 62.3999 141.144 62.5055 141.33C62.5332 141.393 62.5332 141.431 62.4795 141.431H61.4814C61.4277 141.431 61.4406 141.393 61.4684 141.33C61.574 141.148 61.7073 140.556 61.7332 139.67ZM72.3759 141.443H73.5518C73.6592 141.443 73.6722 141.393 73.6592 141.341C73.5796 141.148 73.6851 140.389 74.0999 139.426L74.487 138.528H77.5018L77.8221 139.363C78.1573 140.222 78.437 140.981 78.3981 141.315C78.3981 141.404 78.411 141.443 78.5184 141.443H80.0092C80.0888 141.443 80.1018 141.367 80.061 141.315C79.7814 140.969 79.4073 140.196 79.074 139.363L76.6388 133.274H76.1573L73.4184 139.426C72.937 140.518 72.5907 141.096 72.3499 141.341C72.2833 141.393 72.2962 141.443 72.3759 141.443ZM77.3333 138.109H74.6629L76.0499 134.833L77.3333 138.109Z" fill="#CCCCCC"/>
+    </symbol>
+  </svg>
+
+  <main id="deck">
+
+    <!-- 01 · PORTADA -->
+    <section class="slide cover field-borgona active" data-field="borgona">
+      <div class="cover-grid">
+        <div class="logo-lockup pop" aria-label="UCEMA"><svg><use href="#ucema"/></svg></div>
+        <div class="cover-main">
+          <div class="kicker anim">Universidad del CEMA</div>
+          <h1 class="cover-title">
+            <span class="reveal r1"><span>Ingeniería</span></span>
+            <span class="reveal r2"><span>en Informática</span></span>
+          </h1>
+          <div class="rule"></div>
+        </div>
+        <div class="cover-foot anim a3">
+          <div class="speaker">
+            <img src="assets/founder-lucio.jpg" alt="Luciano Esteban" />
+            <div>
+              <div class="n">Luciano Esteban</div>
+              <div class="r">Founder @diVenuo · Cybersecurity Architect @Personal · Ing. (UCEMA) · Applied AI Engineer &amp; Ex Software Developer</div>
+            </div>
+          </div>
+          <div class="venue-r">
+            <div class="l">Charla en el</div>
+            <div class="c">Colegio Carmen Arriola de Marín</div>
+            <div class="s">San Isidro, Buenos Aires</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · EL MUNDO QUE VIENE -->
+    <section class="slide field-borgona" data-field="borgona">
+      <div class="wrap">
+        <div class="eyebrow anim">Lo que se viene</div>
+        <h1 class="display">
+          <span class="reveal r1"><span>Todo lo que viene</span></span>
+          <span class="reveal r2"><span>se construye con</span></span>
+          <span class="reveal r3"><span>software e <span class="oroacc">IA</span>.</span></span>
+        </h1>
+        <p class="sub anim a3">Es la habilidad más pedida de la década, y vos llegás justo a tiempo. Desde tu cuarto podés crear algo que use el mundo entero o que cambie el proyecto de la esquina.</p>
+      </div>
+    </section>
+
+    <!-- 03 · CREAR, NO SOLO USAR -->
+    <section class="slide field-hueso" data-field="hueso">
+      <div class="wrap">
+        <div class="eyebrow anim">Lo primero que cambia en vos</div>
+        <h1 class="display">
+          <span class="reveal r1"><span>Dejás de <span class="acc">usar</span> lo</span></span>
+          <span class="reveal r2"><span>que otros hicieron.</span></span>
+          <span class="reveal r3"><span>Empezás a <span class="acc">crearlo</span>.</span></span>
+        </h1>
+        <p class="sub anim a3">No hace falta ser un genio ni pedirle permiso a nadie. Se aprende creando, y hoy tenés todo para empezar.</p>
+      </div>
+    </section>
+
+    <!-- 04 · ANTES QUE TODOS -->
+    <section class="slide field-borgona" data-field="borgona">
+      <div class="wrap">
+        <div class="eyebrow anim">Antes de recibirte</div>
+        <h1 class="display">
+          <span class="reveal r1"><span>Ya estás trabajando.</span></span>
+          <span class="reveal r2"><span style="font-size:.6em; display:inline-block; margin-top:.5em; letter-spacing:-.02em">Tus profesores <span class="flecha">&rarr;</span> tus colegas.</span></span>
+        </h1>
+        <p class="sub anim a3">Una comunidad chica donde el profe, el fundador y el contacto que necesitás están a una charla de distancia. Acá nadie queda en el anonimato.</p>
+      </div>
+    </section>
+
+    <!-- 05 · TU TAREA SE VUELVE UNA EMPRESA -->
+    <section class="slide field-hueso" data-field="hueso">
+      <div class="wrap">
+        <div class="eyebrow anim">Y no termina en un cajón</div>
+        <h1 class="display">
+          <span class="reveal r1"><span>Ese proyecto de la facu</span></span>
+          <span class="reveal r2"><span>se vuelve una <span class="acc">empresa</span></span></span>
+          <span class="reveal r3"><span>de verdad.</span></span>
+        </h1>
+        <div class="badge pop">
+          <img src="assets/divenuo-icon-oficial.jpg" alt="diVenuo" />
+          <div class="div"></div>
+          <div class="cap"><b>diVenuo nació así.</b><br>Turnos y señas para locales.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · MI HISTORIA (antes / hoy) -->
+    <section class="slide historia field-borgona" data-field="borgona">
+      <div class="wrap">
+        <div class="eyebrow anim">Mi historia</div>
+        <h1 class="display">
+          <span class="reveal r1"><span>Si yo pude,</span></span>
+          <span class="reveal r2"><span>vos también podés.</span></span>
+        </h1>
+        <div class="comp">
+          <div class="comp-col anim">
+            <span class="cuando">Antes de la UCEMA</span>
+            <div class="foto foto-antes">
+              <figure>
+                <img src="assets/historia-antes.png" alt="Celu-Compu casero" style="object-position:center 55%" />
+                <span class="que">Mi &laquo;Celu-Compu&raquo;: una lupa, un teclado y muchas ganas.</span>
+              </figure>
+            </div>
+          </div>
+          <div class="comp-col anim a2">
+            <span class="cuando">Actualidad</span>
+            <div class="comp-stack">
+              <div class="foto foto-hoy">
+                <figure>
+                  <img src="assets/historia-charla-ia.jpg" alt="Charla de Claude Code junto a Anthropic" style="object-position:62% 28%" />
+                  <span class="que">Charla de IA (Claude Code) junto a Anthropic.</span>
+                </figure>
+              </div>
+              <div class="foto foto-hoy">
+                <figure>
+                  <img src="assets/historia-cyber.jpg" alt="Equipo de Ciberseguridad de Personal" style="object-position:center 42%" />
+                  <span class="que">Con el equipo de Ciberseguridad de Personal.</span>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · CIERRE -->
+    <section class="slide field-borgona" data-field="borgona">
+      <div class="wrap">
+        <div class="eyebrow anim">Tu turno</div>
+        <h1 class="serif">
+          <span class="reveal r1"><span>La próxima cosa que todos usen&hellip;</span></span>
+          <span class="reveal r2"><span>la podés construir <span class="oroacc">vos</span>.<span class="cursor"></span></span></span>
+        </h1>
+        <div class="rule" style="margin:clamp(1.6rem,4vh,2.4rem) auto 0"></div>
+        <svg class="logo-ucema chico pop" aria-label="UCEMA" style="margin-top:clamp(1.4rem,3.5vh,2rem)"><use href="#ucema"/></svg>
+        <div class="eyebrow anim a3" style="margin-top:1rem; margin-bottom:0">Universidad del CEMA · Ingeniería en Informática</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- HUD -->
+  <div id="marca" class="hud">UCEMA</div>
+  <div id="indice" class="hud"><b id="idx">01</b> / <span id="total">06</span></div>
+  <div id="pista"><span class="k">&rarr;</span> avanzar <span class="k">&larr;</span> volver <span class="k">F</span> pantalla completa</div>
+
+<script>
+  (function(){
+    const deck   = document.getElementById('deck');
+    const slides = Array.from(deck.querySelectorAll('.slide'));
+    const barra  = document.getElementById('progreso');
+    const idxEl  = document.getElementById('idx');
+    const totEl  = document.getElementById('total');
+    const pista  = document.getElementById('pista');
+
+    let i = 0, limpiar;
+    totEl.textContent = String(slides.length).padStart(2,'0');
+
+    function pintar(){
+      const activa = slides[i];
+      const field = activa.dataset.field;
+      document.body.classList.toggle('en-borgona', field==='borgona');
+      document.body.classList.toggle('en-hueso',   field==='hueso');
+      idxEl.textContent = String(i+1).padStart(2,'0');
+      barra.style.width = (i/(slides.length-1))*100 + '%';
+      pista.style.opacity = (i===0) ? '1' : '0';
+    }
+
+    function ir(n){
+      const dest = Math.max(0, Math.min(slides.length-1, n));
+      if(dest === i) return;
+      const prev = i; i = dest;
+      // La saliente queda debajo (opaca) mientras la nueva enfoca por encima
+      slides.forEach(s=> s.classList.remove('leaving'));
+      slides[prev].classList.remove('active');
+      slides[prev].classList.add('leaving');
+      slides[dest].classList.add('active');
+      clearTimeout(limpiar);
+      limpiar = setTimeout(()=> slides.forEach(s=> s.classList.remove('leaving')), 900);
+      pintar();
+    }
+    const avanzar    = ()=> ir(i+1);
+    const retroceder = ()=> ir(i-1);
+
+    window.addEventListener('keydown', e=>{
+      switch(e.key){
+        case 'ArrowRight': case ' ': case 'PageDown': case 'Enter': e.preventDefault(); avanzar(); break;
+        case 'ArrowLeft': case 'PageUp': case 'Backspace': e.preventDefault(); retroceder(); break;
+        case 'Home': e.preventDefault(); ir(0); break;
+        case 'End':  e.preventDefault(); ir(slides.length-1); break;
+        case 'f': case 'F':
+          if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+          else document.exitFullscreen?.();
+          break;
+      }
+    });
+
+    let x0=null;
+    deck.addEventListener('pointerdown', e=> x0=e.clientX );
+    deck.addEventListener('pointerup', e=>{
+      if(x0===null) return; const dx=e.clientX-x0; x0=null;
+      if(Math.abs(dx)>50){ dx<0?avanzar():retroceder(); } else avanzar();
+    });
+
+    pintar();
+  })();
+</script>
+</body>
+</html>
