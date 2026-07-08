@@ -140,6 +140,13 @@
   .speaker .n{ font-weight:800; font-size:clamp(.95rem,1.7vw,1.12rem); color:#fff; letter-spacing:-.01em; }
   .speaker .r{ font-size:clamp(.7rem,1.35vw,.83rem); color:var(--soya-cl); margin-top:.2rem;
     max-width:40ch; line-height:1.4; }
+  .roles{ display:flex; flex-wrap:wrap; gap:.45rem; margin-top:.55rem; max-width:56ch; }
+  .chip{ font-size:clamp(.78rem,1.4vw,.94rem); font-weight:600; line-height:1;
+    color:rgba(245,241,235,.9); background:rgba(245,241,235,.1);
+    border:1px solid rgba(245,241,235,.2); padding:.46em .82em; border-radius:999px; white-space:nowrap; }
+  .chip b{ color:#fff; font-weight:800; }
+  .chip-hl{ color:var(--tinta); background:var(--oro); border-color:var(--oro); font-weight:800;
+    box-shadow:0 6px 18px rgba(201,169,97,.3); }
   .venue-r{ text-align:right; }
   .venue-r .l{ font-size:clamp(.62rem,1.2vw,.74rem); letter-spacing:.24em; text-transform:uppercase; color:var(--oro); }
   .venue-r .c{ font-family:var(--serif); font-style:italic; font-size:clamp(1rem,2.1vw,1.45rem);
@@ -234,7 +241,12 @@
             <img src="assets/founder-lucio.jpg" alt="Luciano Esteban" />
             <div>
               <div class="n">Luciano Esteban</div>
-              <div class="r">Founder @diVenuo · Cybersecurity Architect @Personal · Ing. (UCEMA) · Applied AI Engineer &amp; Ex Software Developer</div>
+              <div class="roles">
+                <span class="chip chip-hl">Estudiante 5.º año · Ing. en Informática · UCEMA</span>
+                <span class="chip">Founder <b>@diVenuo</b></span>
+                <span class="chip">Cybersecurity Architect <b>@Personal</b></span>
+                <span class="chip">Applied AI Engineer</span>
+              </div>
             </div>
           </div>
           <div class="venue-r">
